@@ -46,7 +46,7 @@ def lerInstancias(listaArquivos):
 def criarPopulacaoInicial(instancia, tamanho):
     permutation = []
 
-    nlist = list(range(1, len(instancia)))
+    nlist = list(range(1, len(instancia[0])))
     for _ in range(tamanho):
         random.shuffle(nlist)
         permutation.append(nlist.copy())
@@ -73,11 +73,12 @@ def retornaMelhorSolucao(populacao, aptidaoPop):
 def selecionarPop(populacao, aptidaoPop):
     conj = list(zip(populacao, aptidaoPop))
     conj.sort(key=lambda t: t[1])
-    return [list(i)[0] for i in conj[0:(len(populacao) * 0.51).__floor__() or 1]]
+    # [0:(len(populacao) * 0.5).__floor__() or 1]]
+    return [list(i)[0] for i in conj]
 
 
 def recombinacao(populacaoSelecionada):
-    for pop in populacaoSelecionada:
+    for pop in populacaoSelecionada * 2:
         inicio = random.randint(0, len(pop))
         fim = inicio + (len(pop) * 0.33).__floor__()
 
@@ -120,21 +121,18 @@ def salvarRelatorio(relatorios):
             solucoes.append(relatorio[i]['solucao'])
 
         # print(apt, tempo)
-        try:
-            data = {
-                "job": files[relatorios.index(relatorio)],
-                "order": str(sorted(list(zip(apt, solucoes)), key=lambda t: t[0])[0][1]),
-                "lower": min(apt),
-                "upper": max(apt),
-                "mdApt": median(apt),
-                "desApt": stdev(apt),
-                "mdTime": median(tempo),
-                "desTime": stdev(tempo),
-            }
+        data = {
+            "job": files[relatorios.index(relatorio)],
+            "order": str(sorted(list(zip(apt, solucoes)), key=lambda t: t[0])[0][1]),
+            "lower": min(apt),
+            "upper": max(apt),
+            "mdApt": median(apt),
+            "desApt": stdev(apt),
+            "mdTime": median(tempo),
+            "desTime": stdev(tempo),
+        }
 
-            f.write(json.dumps(data, indent=4) + ",\n")
-        except:
-            print(relatorio)
+        f.write(json.dumps(data, indent=4) + ",\n")
 
 
 files = list(numpy.repeat([
@@ -159,10 +157,11 @@ for instancia in listaInstancias:
     tempoMaximo = 10
 
     for it in range(10):
-        melhorSolucao = {'solucao': [],
-                         'aptidao': 9223372036854775807,
-                         'tempoFinal': 0,
-                         }
+        melhorSolucao = {
+            'solucao': [],
+            'aptidao': 9223372036854775807,
+            'tempoFinal': 0,
+        }
         tempoInicial = time.time()
         populacao = criarPopulacaoInicial(instancia, tamanhoPop)
 
