@@ -98,7 +98,7 @@ def selecionarNovaGeracao(populacaoAtual, novasSolucoes):
     return newGen[0: ((len(newGen) * 0.5).__floor__() or 1)] 
 
 def salvarRelatorio(relatorios):
-    f = open("result.json", "a+")
+    f = open('result.json', 'a+')
 
     for relatorio in relatorios:
         apt, tempo, solucoes = [],[],[]
@@ -121,10 +121,9 @@ def salvarRelatorio(relatorios):
                 "desTime": stdev(tempo),
             }
 
-            f.write(json.dumps(data) + ",\n")
+            f.write(json.dumps(data, indent=4) + ",\n")
         except:
             print(relatorio)
-        
 
 files = list(numpy.repeat( [
     "flowshop/tai20_5.txt",
